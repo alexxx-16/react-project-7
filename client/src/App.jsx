@@ -10,6 +10,21 @@ const App = () => {
   const [statusMessage, setStatusMessage] = useState({ message: "", type: "" });
   const [isLoading, setIsLoading] = useState(false);
 
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    return localStorage.getItem("theme") === "dark";
+  });
+
+  useEffect(() => {
+    const root = window.document.documentElement;
+    if (isDarkMode) {
+      root.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      root.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [isDarkMode]);
+
   const showStatusMessage = (message, type) => {
     setStatusMessage({ message: message, type: type });
     setTimeout(() => setStatusMessage({ message: "", type: "" }), 2000);
@@ -70,8 +85,8 @@ const App = () => {
   };
 
   return (
-    <div className="w-full min-h-screen flex flex-col bg-zinc-200">
-      <Header />
+    <div className="w-full min-h-screen flex flex-col bg-zinc-200 dark:bg-zinc-900 transition-colors duration-300">
+      <Header isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
 
       <main className="flex-1 p-4 flex flex-col gap-4">
         <CreateNoteArea
