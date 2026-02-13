@@ -78,7 +78,6 @@ const App = () => {
           submitNote={submitNote}
           showStatusMessage={showStatusMessage}
         />
-
         {statusMessage.message && (
           <div className="fixed inset-x-0 top-10 z-50 flex justify-center transition-all duration-300 animate-in fade-in">
             <div
@@ -92,9 +91,12 @@ const App = () => {
             </div>
           </div>
         )}
-
         {isLoading && <p className="text-center">Fetching Notes...</p>}
-
+        {!isLoading && notes.length === 0 && (
+          <p className="text-center text-zinc-700">
+            Start by creating your first note!
+          </p>
+        )}
         <div className="flex flex-col gap-4 sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {notes.map((note) => (
             <Note key={note.id} note={note} deleteNote={deleteNote} />
