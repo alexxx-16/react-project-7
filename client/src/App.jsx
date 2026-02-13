@@ -8,7 +8,7 @@ import Footer from "./components/Footer";
 const App = () => {
   const [notes, setNotes] = useState([]);
   const [statusMessage, setStatusMessage] = useState({ message: "", type: "" });
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return localStorage.getItem("theme") === "dark";
@@ -85,7 +85,7 @@ const App = () => {
   };
 
   return (
-    <div className="w-full min-h-screen flex flex-col bg-zinc-200 dark:bg-zinc-900 transition-colors duration-300">
+    <div className="w-full min-h-screen flex flex-col bg-zinc-200 dark:bg-zinc-950 transition-colors duration-300">
       <Header isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
 
       <main className="flex-1 p-4 flex flex-col gap-4">
@@ -106,9 +106,11 @@ const App = () => {
             </div>
           </div>
         )}
-        {isLoading && <p className="text-center">Fetching Notes...</p>}
+        {isLoading && (
+          <p className="text-center dark:text-zinc-300">Fetching Notes...</p>
+        )}
         {!isLoading && notes.length === 0 && (
-          <p className="text-center text-zinc-700">
+          <p className="text-center text-zinc-700 dark:text-zinc-300">
             Start by creating your first note!
           </p>
         )}

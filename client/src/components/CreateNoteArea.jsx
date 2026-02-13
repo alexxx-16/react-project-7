@@ -35,14 +35,14 @@ const CreateNoteArea = ({ submitNote, showStatusMessage }) => {
   return (
     <form
       onSubmit={handleSubmitNote}
-      className="bg-zinc-100 p-4 rounded-md shadow-md flex flex-col gap-4"
+      className="bg-zinc-100 dark:bg-zinc-900 p-4 rounded-md shadow-md flex flex-col gap-4"
     >
       <div className="flex justify-between">
         <input
           name="title"
           type="text"
           placeholder="Note Title"
-          className="outline-none p-1 border-b-2 border-yellow-300 placeholder-zinc-400 font-xl"
+          className="outline-none bg-transparent p-1 border-b-2 border-yellow-300 dark:border-zinc-700 dark:text-zinc-200 placeholder-zinc-400 font-xl"
           value={note.title}
           onChange={handleChange}
         />
@@ -53,7 +53,7 @@ const CreateNoteArea = ({ submitNote, showStatusMessage }) => {
 
       <textarea
         name="content"
-        className="outline-none p-2 rounded-md ring-2 ring-yellow-300 placeholder-zinc-400 font-light"
+        className="outline-none p-2 rounded-md ring-2 ring-yellow-300 dark:ring-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 placeholder-zinc-400 font-light"
         placeholder="Write your note here"
         value={note.content}
         onChange={handleChange}
