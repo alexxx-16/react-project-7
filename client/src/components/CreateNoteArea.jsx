@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Button from "./Button";
 
-const CreateNoteArea = ({ submitNote }) => {
+const CreateNoteArea = ({ submitNote, showStatusMessage }) => {
   const [note, setNote] = useState({
     title: "",
     content: "",
@@ -16,10 +16,20 @@ const CreateNoteArea = ({ submitNote }) => {
     e.preventDefault();
     const { title, content } = note;
 
-    if (!title.trim() || !content.trim()) return;
+    if (!title.trim() || !content.trim()) {
+      showStatusMessage("Please enter both title and content", "error");
+      return;
+    }
 
     submitNote(note);
     setNote({ title: "", content: "" });
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmitNote(e);
+    }
   };
 
   return (
@@ -36,7 +46,9 @@ const CreateNoteArea = ({ submitNote }) => {
           value={note.title}
           onChange={handleChange}
         />
-        <Button>Post Note</Button>
+        <Button type="submit">
+          Post <span className="hidden min-[350px]:inline">Note</span>
+        </Button>
       </div>
 
       <textarea
@@ -45,6 +57,7 @@ const CreateNoteArea = ({ submitNote }) => {
         placeholder="Write your note here"
         value={note.content}
         onChange={handleChange}
+        onKeyDown={handleKeyDown}
       />
     </form>
   );
