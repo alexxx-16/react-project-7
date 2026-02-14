@@ -14,9 +14,9 @@ const UserSelector = ({
           setCurrentUserId(e.target.value);
         }
       }}
-      className="bg-white/15 dark:bg-zinc-800/40 
+      className="bg-white/15 dark:bg-yellow-500 
     text-lg text-center px-2 rounded-md 
-    ring ring-white/30 dark:ring-zinc-700
+    ring ring-white/30 dark:ring-yellow-200
     outline-none cursor-pointer
     hover:bg-white/25 transition-all duration-200
     appearance-none"

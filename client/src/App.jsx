@@ -7,21 +7,49 @@ import Footer from "./components/Footer";
 
 const App = () => {
   const [notes, setNotes] = useState([]);
-  const [users, setUsers] = useState([
-    { id: "1", name: "Guest" },
-    { id: "2", name: "Alex" },
-  ]);
-  const [currentUserId, setCurrentUserId] = useState("1");
+  const [users, setUsers] = useState([]);
+  const [currentUserId, setCurrentUserId] = useState("");
 
   const [statusMessage, setStatusMessage] = useState({ message: "", type: "" });
   const [isLoading, setIsLoading] = useState(true);
 
-  const handleAddUser = () => {
+  useEffect(() => {
+    const loadUsers = async () => {
+      try {
+        const res = await fetch("http://localhost:5001/api/users");
+        const data = await res.json();
+        setUsers(data);
+
+        if (data.length > 0) setCurrentUserId(data[0].id.toString());
+      } catch (err) {
+        showStatusMessage("Failed to load users", "error");
+      }
+    };
+    loadUsers();
+  }, []);
+
+  const handleAddUser = async () => {
     const name = prompt("What's the new user's name?");
-    if (name) {
-      const newUser = { id: Date.now().toString(), name: name };
-      setUsers([...users, newUser]);
-      setCurrentUserId(newUser.id);
+    if (!name) return;
+
+    const formattedName =
+      name.trim().charAt(0).toUpperCase() + name.trim().slice(1).toLowerCase();
+
+    try {
+      const res = await fetch("http://localhost:5001/api/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: formattedName }),
+      });
+      const newUser = await res.json();
+
+      if (res.ok) {
+        setUsers([...users, newUser]);
+        setCurrentUserId(newUser.id.toString());
+        showStatusMessage(`Welcome, ${formattedName}`, "success");
+      }
+    } catch (error) {
+      showStatusMessage("Could not save user to database", "error");
     }
   };
 
@@ -49,11 +77,12 @@ const App = () => {
 
   // fetch notes
   const fetchNotes = async () => {
+    if (!currentUserId) return;
     setIsLoading(true);
 
     try {
       const res = await fetch(
-        "http://localhost:5001/api/notes?userId=" + currentUserId,
+        "http://localhost:5001/api/notes?user_id=" + currentUserId,
       );
       setNotes(await res.json());
     } catch (error) {
@@ -87,7 +116,7 @@ const App = () => {
       const res = await fetch("http://localhost:5001/api/notes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...newNote, userId: currentUserId }),
+        body: JSON.stringify({ ...newNote, user_id: parseInt(currentUserId) }),
       });
 
       const data = await res.json();
