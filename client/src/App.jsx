@@ -5,6 +5,7 @@ import Note from "./components/Note";
 import CreateNoteArea from "./components/CreateNoteArea";
 import Footer from "./components/Footer";
 import { useNotes } from "./hooks/useNotes";
+import { useCallback } from "react";
 
 const App = () => {
   const [users, setUsers] = useState([]);
@@ -51,6 +52,38 @@ const App = () => {
     }
   };
 
+  const handleDeleteUser = async () => {
+    if (!currentUserId) return;
+
+    const userToDelete = users.find((u) => u.id.toString() == currentUserId);
+
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete ${userToDelete?.name}? This will delete all notes forever.`,
+    );
+    if (!confirmDelete) return;
+
+    try {
+      const res = await fetch(
+        `http://localhost:5001/api/users/${currentUserId}`,
+        { method: "DELETE" },
+      );
+      if (res.ok) {
+        const updatedUsers = users.filter(
+          (u) => u.id.toString() != currentUserId,
+        );
+      }
+      setUsers(updatedUsers);
+      if (updatedUsers.length > 0) {
+        setCurrentUserId(updatedUsers[0].id.toString());
+      } else {
+        setCurrentUserId("");
+      }
+      showStatusMessage("User has been deleted", "success");
+    } catch (error) {
+      showStatusMessage("Could not delete user", "error");
+    }
+  };
+
   // dark mode
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return localStorage.getItem("theme") === "dark";
@@ -68,10 +101,10 @@ const App = () => {
   }, [isDarkMode]);
 
   // status message
-  const showStatusMessage = (message, type) => {
+  const showStatusMessage = useCallback((message, type) => {
     setStatusMessage({ message: message, type: type });
     setTimeout(() => setStatusMessage({ message: "", type: "" }), 2000);
-  };
+  }, []);
 
   const { notes, isLoading, submitNote, deleteNote } = useNotes(
     currentUserId,
@@ -87,6 +120,7 @@ const App = () => {
         currentUserId={currentUserId}
         setCurrentUserId={setCurrentUserId}
         onAddUser={handleAddUser}
+        onDeleteUser={handleDeleteUser}
       />
 
       <main className="flex-1 p-4 flex flex-col gap-4">

@@ -6,26 +6,26 @@ export const useNotes = (currentUserId, showStatusMessage) => {
   const [isLoading, setIsLoading] = useState(true);
 
   // fetch notes
-  const fetchNotes = async () => {
-    if (!currentUserId) return;
-    setIsLoading(true);
-
-    try {
-      const res = await fetch(
-        `http://localhost:5001/api/notes?user_id=${currentUserId}`,
-      );
-      setNotes(await res.json());
-    } catch (error) {
-      console.error("Failed to load notes: ", error);
-      showStatusMessage("Failed to load notes", "error");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchNotes = async () => {
+      if (!currentUserId) return;
+      setIsLoading(true);
+
+      try {
+        const res = await fetch(
+          `http://localhost:5001/api/notes?user_id=${currentUserId}`,
+        );
+        setNotes(await res.json());
+      } catch (error) {
+        console.error("Failed to load notes: ", error);
+        showStatusMessage("Failed to load notes", "error");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     fetchNotes();
-  }, [currentUserId]);
+  }, [currentUserId, showStatusMessage]);
 
   // post notes
   const submitNote = async (newNote) => {
@@ -51,7 +51,7 @@ export const useNotes = (currentUserId, showStatusMessage) => {
 
   // delete note
   const deleteNote = async (id) => {
-    setNotes(notes.filter((note) => note.id != id));
+    setNotes((prev) => prev.filter((note) => note.id != id));
     try {
       const res = await fetch(`http://localhost:5001/api/notes/${id}`, {
         method: "DELETE",
