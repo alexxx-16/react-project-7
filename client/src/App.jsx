@@ -4,14 +4,12 @@ import Header from "./components/Header";
 import Note from "./components/Note";
 import CreateNoteArea from "./components/CreateNoteArea";
 import Footer from "./components/Footer";
+import { useNotes } from "./hooks/useNotes";
 
 const App = () => {
-  const [notes, setNotes] = useState([]);
   const [users, setUsers] = useState([]);
   const [currentUserId, setCurrentUserId] = useState("");
-
   const [statusMessage, setStatusMessage] = useState({ message: "", type: "" });
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const loadUsers = async () => {
@@ -75,63 +73,10 @@ const App = () => {
     setTimeout(() => setStatusMessage({ message: "", type: "" }), 2000);
   };
 
-  // fetch notes
-  const fetchNotes = async () => {
-    if (!currentUserId) return;
-    setIsLoading(true);
-
-    try {
-      const res = await fetch(
-        "http://localhost:5001/api/notes?user_id=" + currentUserId,
-      );
-      setNotes(await res.json());
-    } catch (error) {
-      console.error("Error fetching notes: ", error);
-      showStatusMessage("Failed to load notes", "error");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchNotes();
-  }, [currentUserId]);
-
-  const deleteNote = async (id) => {
-    setNotes(notes.filter((note) => note.id != id));
-    try {
-      const res = await fetch(`http://localhost:5001/api/notes/${id}`, {
-        method: "DELETE",
-      });
-      if (res.ok) {
-        showStatusMessage("Note deleted", "success");
-      }
-    } catch (error) {
-      showStatusMessage("Could not delete note", "error");
-    }
-  };
-
-  const submitNote = async (newNote) => {
-    try {
-      const res = await fetch("http://localhost:5001/api/notes", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...newNote, user_id: parseInt(currentUserId) }),
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        setNotes((prev) => [data, ...prev]);
-        showStatusMessage("Note saved", "success");
-      } else {
-        showStatusMessage(data.message || "Failed to save note", "error");
-      }
-    } catch (error) {
-      console.error("Error posting note: ", error);
-      showStatusMessage("Server is offline", "error");
-    }
-  };
+  const { notes, isLoading, submitNote, deleteNote } = useNotes(
+    currentUserId,
+    showStatusMessage,
+  );
 
   return (
     <div className="w-full min-h-screen flex flex-col bg-zinc-200 dark:bg-zinc-950 transition-colors duration-300">
