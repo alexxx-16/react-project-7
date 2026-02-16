@@ -6,89 +6,15 @@ import CreateNoteArea from "./components/CreateNoteArea";
 import Footer from "./components/Footer";
 import { useNotes } from "./hooks/useNotes";
 import { useCallback } from "react";
+import { useUsers } from "./hooks/useUsers";
 
 const App = () => {
-  const [users, setUsers] = useState([]);
-  const [currentUserId, setCurrentUserId] = useState("");
   const [statusMessage, setStatusMessage] = useState({ message: "", type: "" });
-
-  useEffect(() => {
-    const loadUsers = async () => {
-      try {
-        const res = await fetch("http://localhost:5001/api/users");
-        const data = await res.json();
-        setUsers(data);
-
-        if (data.length > 0) setCurrentUserId(data[0].id.toString());
-      } catch (err) {
-        showStatusMessage("Failed to load users", "error");
-      }
-    };
-    loadUsers();
-  }, []);
-
-  const handleAddUser = async () => {
-    const name = prompt("What's the new user's name?");
-    if (!name) return;
-
-    const formattedName =
-      name.trim().charAt(0).toUpperCase() + name.trim().slice(1).toLowerCase();
-
-    try {
-      const res = await fetch("http://localhost:5001/api/users", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: formattedName }),
-      });
-      const newUser = await res.json();
-
-      if (res.ok) {
-        setUsers([...users, newUser]);
-        setCurrentUserId(newUser.id.toString());
-        showStatusMessage(`Welcome, ${formattedName}`, "success");
-      }
-    } catch (error) {
-      showStatusMessage("Could not save user to database", "error");
-    }
-  };
-
-  const handleDeleteUser = async () => {
-    if (!currentUserId) return;
-
-    const userToDelete = users.find((u) => u.id.toString() == currentUserId);
-
-    const confirmDelete = window.confirm(
-      `Are you sure you want to delete ${userToDelete?.name}? This will delete all notes forever.`,
-    );
-    if (!confirmDelete) return;
-
-    try {
-      const res = await fetch(
-        `http://localhost:5001/api/users/${currentUserId}`,
-        { method: "DELETE" },
-      );
-      if (res.ok) {
-        const updatedUsers = users.filter(
-          (u) => u.id.toString() != currentUserId,
-        );
-      }
-      setUsers(updatedUsers);
-      if (updatedUsers.length > 0) {
-        setCurrentUserId(updatedUsers[0].id.toString());
-      } else {
-        setCurrentUserId("");
-      }
-      showStatusMessage("User has been deleted", "success");
-    } catch (error) {
-      showStatusMessage("Could not delete user", "error");
-    }
-  };
-
-  // dark mode
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return localStorage.getItem("theme") === "dark";
   });
 
+  //DARK MODE
   useEffect(() => {
     const root = window.document.documentElement;
     if (isDarkMode) {
@@ -100,12 +26,21 @@ const App = () => {
     }
   }, [isDarkMode]);
 
-  // status message
   const showStatusMessage = useCallback((message, type) => {
     setStatusMessage({ message: message, type: type });
     setTimeout(() => setStatusMessage({ message: "", type: "" }), 2000);
   }, []);
 
+  //USERS
+  const {
+    users,
+    currentUserId,
+    setCurrentUserId,
+    handleAddUser,
+    handleDeleteUser,
+  } = useUsers(showStatusMessage);
+
+  //NOTES
   const { notes, isLoading, submitNote, deleteNote } = useNotes(
     currentUserId,
     showStatusMessage,
