@@ -61,7 +61,7 @@ export const useNotes = (currentUserId, showStatusMessage) => {
       if (res.ok) {
         const updatedNote = await res.json();
         setNotes((prevNotes) =>
-          prevNotes.map((note) => (note.id ? updatedNote : note)),
+          prevNotes.map((note) => (note.id === id ? updatedNote : note)),
         );
         showStatusMessage("Note updated", "success");
       }

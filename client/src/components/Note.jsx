@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Button from "./Button";
+import pencilIcon from "../assets/pencil.svg";
 
 const Note = ({ note, deleteNote, updateNote }) => {
   const [isDeleting, setIsDeleting] = useState(false);
@@ -8,6 +9,18 @@ const Note = ({ note, deleteNote, updateNote }) => {
     title: note.title,
     content: note.content,
   });
+
+  const formattedDate = (dateString) => {
+    const options = {
+      hour: "2-digit",
+      minute: "2-digit",
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hourt12: false,
+    };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -64,11 +77,19 @@ const Note = ({ note, deleteNote, updateNote }) => {
             <h2 className="text-xl capitalize text-yellow-500 dark:text-yellow-400 border-b-2 border-yellow-300 dark:border-zinc-700">
               {note.title}
             </h2>
-            <Button onClick={handleDelete}>Delete</Button>
+            <div className="flex gap-2">
+              <Button onClick={() => setIsEditing(true)}>
+                <img src={pencilIcon} alt="edit icon" className="w-5 h-5" />
+              </Button>
+              <Button onClick={handleDelete}>Delete</Button>
+            </div>
           </div>
-          <p className="font-light text-zinc-700 dark:text-zinc-300">
+          <p className="font-light text-lg text-zinc-700 dark:text-zinc-300">
             {note.content}
           </p>
+          <div className="flex justify-end text-zinc-600 dark:text-zinc-400 font-light text-sm">
+            {formattedDate(note.created_at)}
+          </div>
         </>
       )}
     </div>

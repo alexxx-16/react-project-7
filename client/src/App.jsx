@@ -5,9 +5,11 @@ import Note from "./components/Note";
 import CreateNoteArea from "./components/CreateNoteArea";
 import { useNotes } from "./hooks/useNotes";
 import { useUsers } from "./hooks/useUsers";
+import UserModal from "./components/UserModal";
 
 const App = () => {
   const [statusMessage, setStatusMessage] = useState({ message: "", type: "" });
+  const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return localStorage.getItem("theme") === "dark";
   });
@@ -24,6 +26,13 @@ const App = () => {
     }
   }, [isDarkMode]);
 
+  // MODAL
+  const triggerAddUserModal = () => setIsUserModalOpen(true);
+  const saveNewUser = (name) => {
+    handleAddUser(name);
+  };
+
+  // STATUS MESSAGE
   const showStatusMessage = useCallback((message, type) => {
     setStatusMessage({ message: message, type: type });
     setTimeout(() => setStatusMessage({ message: "", type: "" }), 2000);
@@ -52,8 +61,13 @@ const App = () => {
         users={users}
         currentUserId={currentUserId}
         setCurrentUserId={setCurrentUserId}
-        onAddUser={handleAddUser}
+        onAddUser={triggerAddUserModal}
         onDeleteUser={handleDeleteUser}
+      />
+      <UserModal
+        isOpen={isUserModalOpen}
+        onClose={() => setIsUserModalOpen(false)}
+        onSave={saveNewUser}
       />
 
       <main className="flex-1 p-4 flex flex-col gap-4">

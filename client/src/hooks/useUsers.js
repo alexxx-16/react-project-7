@@ -20,10 +20,7 @@ export const useUsers = (showStatusMessage) => {
     loadUsers();
   }, [showStatusMessage]);
 
-  const handleAddUser = async () => {
-    const name = prompt("Whats' the new user's name?");
-    if (!name) return;
-
+  const handleAddUser = async (name) => {
     const formattedName =
       name.trim().charAt(0).toUpperCase() + name.trim().slice(1).toLowerCase();
     try {
