@@ -49,6 +49,24 @@ export const useNotes = (currentUserId, showStatusMessage) => {
     }
   };
 
+  // update note
+  const updateNote = async (id, updatedFields) => {
+    try {
+      const res = await fetch(`http://localhost:5001/api/notes/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedFields),
+      });
+
+      if (res.ok) {
+        const updatedNote = await res.json();
+        setNotes((prevNotes) =>
+          prevNotes.map((note) => (note.id ? updatedNote : note)),
+        );
+      }
+    } catch (error) {}
+  };
+
   // delete note
   const deleteNote = async (id) => {
     setNotes((prev) => prev.filter((note) => note.id != id));
