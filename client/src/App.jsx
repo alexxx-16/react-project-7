@@ -1,11 +1,9 @@
-import { useEffect } from "react";
-import { useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Header from "./components/Header";
+import Footer from "./components/Footer";
 import Note from "./components/Note";
 import CreateNoteArea from "./components/CreateNoteArea";
-import Footer from "./components/Footer";
 import { useNotes } from "./hooks/useNotes";
-import { useCallback } from "react";
 import { useUsers } from "./hooks/useUsers";
 
 const App = () => {
@@ -41,7 +39,7 @@ const App = () => {
   } = useUsers(showStatusMessage);
 
   //NOTES
-  const { notes, isLoading, submitNote, deleteNote } = useNotes(
+  const { notes, isLoading, submitNote, deleteNote, updateNote } = useNotes(
     currentUserId,
     showStatusMessage,
   );
@@ -88,7 +86,12 @@ const App = () => {
         )}
         <div className="flex flex-col gap-4 sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {notes.map((note) => (
-            <Note key={note.id} note={note} deleteNote={deleteNote} />
+            <Note
+              key={note.id}
+              note={note}
+              deleteNote={deleteNote}
+              updateNote={updateNote}
+            />
           ))}
         </div>
       </main>

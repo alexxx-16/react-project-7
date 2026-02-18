@@ -63,8 +63,11 @@ export const useNotes = (currentUserId, showStatusMessage) => {
         setNotes((prevNotes) =>
           prevNotes.map((note) => (note.id ? updatedNote : note)),
         );
+        showStatusMessage("Note updated", "success");
       }
-    } catch (error) {}
+    } catch (error) {
+      showStatusMessage("Server error, try again later", "error");
+    }
   };
 
   // delete note
@@ -83,5 +86,5 @@ export const useNotes = (currentUserId, showStatusMessage) => {
     }
   };
 
-  return { notes, isLoading, submitNote, deleteNote };
+  return { notes, isLoading, submitNote, deleteNote, updateNote };
 };
