@@ -44,9 +44,6 @@ export const useUsers = (showStatusMessage) => {
   const handleDeleteUser = async () => {
     if (!currentUserId) return;
 
-    const userToDelete = users.find((u) => u.id.toString() === currentUserId);
-    if (!window.confirm(`Delete ${userToDelete?.name} and all notes?`)) return;
-
     try {
       const res = await fetch(
         `http://localhost:5001/api/users/${currentUserId}`,

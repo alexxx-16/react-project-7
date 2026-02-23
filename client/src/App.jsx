@@ -9,7 +9,11 @@ import UserModal from "./components/UserModal";
 
 const App = () => {
   const [statusMessage, setStatusMessage] = useState({ message: "", type: "" });
-  const [isUserModalOpen, setIsUserModalOpen] = useState(false);
+  const [UserModalConfig, setUserModalConfig] = useState({
+    isOpen: false,
+    mode: "add",
+  });
+
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return localStorage.getItem("theme") === "dark";
   });
@@ -26,18 +30,6 @@ const App = () => {
     }
   }, [isDarkMode]);
 
-  // MODAL
-  const triggerAddUserModal = () => setIsUserModalOpen(true);
-  const saveNewUser = (name) => {
-    handleAddUser(name);
-  };
-
-  // STATUS MESSAGE
-  const showStatusMessage = useCallback((message, type) => {
-    setStatusMessage({ message: message, type: type });
-    setTimeout(() => setStatusMessage({ message: "", type: "" }), 2000);
-  }, []);
-
   //USERS
   const {
     users,
@@ -53,6 +45,21 @@ const App = () => {
     showStatusMessage,
   );
 
+  const currentUser = users.find((u) => u.id.toString() === currentUserId);
+
+  // MODAL
+  const openAddModal = () => setUserModalConfig({ isOpen: true, mode: "add" });
+  const openDeleteModal = () =>
+    setUserModalConfig({ isOpen: true, mode: "delete" });
+  const closeUserModal = () =>
+    setUserModalConfig((prev) => ({ ...prev, isOpen: false }));
+
+  // STATUS MESSAGE
+  const showStatusMessage = useCallback((message, type) => {
+    setStatusMessage({ message: message, type: type });
+    setTimeout(() => setStatusMessage({ message: "", type: "" }), 2000);
+  }, []);
+
   return (
     <div className="w-full min-h-screen flex flex-col bg-zinc-200 dark:bg-zinc-950 transition-colors duration-300">
       <Header
@@ -61,13 +68,21 @@ const App = () => {
         users={users}
         currentUserId={currentUserId}
         setCurrentUserId={setCurrentUserId}
-        onAddUser={triggerAddUserModal}
-        onDeleteUser={handleDeleteUser}
+        onAddUser={openAddModal}
+        onDeleteUser={openDeleteModal}
       />
       <UserModal
-        isOpen={isUserModalOpen}
-        onClose={() => setIsUserModalOpen(false)}
-        onSave={saveNewUser}
+        isOpen={UserModalConfig.isOpen}
+        mode={UserModalConfig.mode}
+        userName={currentUser?.name}
+        onClose={closeUserModal}
+        onSave={(name) => {
+          if (UserModalConfig.mode === "add") {
+            handleAddUser(name);
+          } else {
+            handleDeleteUser();
+          }
+        }}
       />
 
       <main className="flex-1 p-4 flex flex-col gap-4">
