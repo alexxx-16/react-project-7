@@ -17,7 +17,7 @@ const UserModal = ({
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    onSave(isDeleteMode ? mull : name);
+    onSave(isDeleteMode ? null : name);
     setName("");
     onClose();
   };

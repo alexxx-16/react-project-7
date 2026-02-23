@@ -30,6 +30,12 @@ const App = () => {
     }
   }, [isDarkMode]);
 
+  // STATUS MESSAGE
+  const showStatusMessage = useCallback((message, type) => {
+    setStatusMessage({ message: message, type: type });
+    setTimeout(() => setStatusMessage({ message: "", type: "" }), 2000);
+  }, []);
+
   //USERS
   const {
     users,
@@ -53,12 +59,6 @@ const App = () => {
     setUserModalConfig({ isOpen: true, mode: "delete" });
   const closeUserModal = () =>
     setUserModalConfig((prev) => ({ ...prev, isOpen: false }));
-
-  // STATUS MESSAGE
-  const showStatusMessage = useCallback((message, type) => {
-    setStatusMessage({ message: message, type: type });
-    setTimeout(() => setStatusMessage({ message: "", type: "" }), 2000);
-  }, []);
 
   return (
     <div className="w-full min-h-screen flex flex-col bg-zinc-200 dark:bg-zinc-950 transition-colors duration-300">
