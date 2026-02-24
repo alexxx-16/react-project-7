@@ -3,12 +3,14 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Note from "./components/Note";
 import CreateNoteArea from "./components/CreateNoteArea";
+import UserModal from "./components/UserModal";
 import { useNotes } from "./hooks/useNotes";
 import { useUsers } from "./hooks/useUsers";
-import UserModal from "./components/UserModal";
 
 const App = () => {
   const [statusMessage, setStatusMessage] = useState({ message: "", type: "" });
+  const [searchTerm, setSearchTerm] = useState("");
+
   const [UserModalConfig, setUserModalConfig] = useState({
     isOpen: false,
     mode: "add",
@@ -45,13 +47,21 @@ const App = () => {
     handleDeleteUser,
   } = useUsers(showStatusMessage);
 
+  const currentUser = users.find((u) => u.id.toString() === currentUserId);
+
   //NOTES
   const { notes, isLoading, submitNote, deleteNote, updateNote } = useNotes(
     currentUserId,
     showStatusMessage,
   );
 
-  const currentUser = users.find((u) => u.id.toString() === currentUserId);
+  const filteredNotes = notes.filter((note) => {
+    const searchLowerCase = searchTerm.toLowerCase();
+    return (
+      note.title.toLowerCase().includes(searchLowerCase) ||
+      note.content.toLowerCase().includes(searchLowerCase)
+    );
+  });
 
   // MODAL
   const openAddModal = () => setUserModalConfig({ isOpen: true, mode: "add" });
@@ -70,6 +80,8 @@ const App = () => {
         setCurrentUserId={setCurrentUserId}
         onAddUser={openAddModal}
         onDeleteUser={openDeleteModal}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
       />
       <UserModal
         isOpen={UserModalConfig.isOpen}

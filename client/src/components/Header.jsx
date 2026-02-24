@@ -11,6 +11,8 @@ const Header = ({
   users,
   onAddUser,
   onDeleteUser,
+  searchTerm,
+  setSearchTerm,
 }) => {
   return (
     <header className="bg-yellow-500 dark:bg-yellow-600 py-2 px-4 flex items-center justify-between text-2xl text-white shadow-md">
@@ -31,16 +33,25 @@ const Header = ({
         </button>
       </div>
 
-      <button
-        className="text-[20px] font"
-        onClick={() => setIsDarkMode(!isDarkMode)}
-      >
-        <img
-          src={isDarkMode ? darkIcon : lightIcon}
-          alt="colour mode icon"
-          className="w-6 h-6"
+      <div className="flex gap-2 justify-center items-center">
+        <input
+          type="text"
+          value={searchTerm}
+          placeholder="Search note"
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="text-lg dark:text-zinc-100 border-b-2 bg-transparent w-32 md:w-48 border-zinc-100 dark:border-zinc-300 outline-none"
         />
-      </button>
+        <button
+          className="text-[20px] font"
+          onClick={() => setIsDarkMode(!isDarkMode)}
+        >
+          <img
+            src={isDarkMode ? darkIcon : lightIcon}
+            alt="colour mode icon"
+            className="w-6 h-6"
+          />
+        </button>
+      </div>
     </header>
   );
 };
