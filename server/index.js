@@ -112,12 +112,12 @@ app.post("/api/notes", async (req, res) => {
 
 app.put("/api/notes/:id", async (req, res) => {
   const { id } = req.params;
-  const { title, content } = req.body;
+  const { title, content, is_pinned } = req.body;
 
   try {
     const result = await query(
-      "UPDATE notes SET title = $1, content = $2 WHERE id = $3 RETURNING *",
-      [title, content, id],
+      "UPDATE notes SET title = $1, content = $2, is_pinned = $3 WHERE id = $4 RETURNING *",
+      [title, content, is_pinned, id],
     );
 
     if (result.rows.length === 0) {

@@ -28,7 +28,7 @@ const Header = ({
           <img
             src={trashIcon}
             alt="delete button icon"
-            className="w-4.5 h-4.5"
+            className="min-w-4.5 h-4.5 cursor-pointer shrink-0"
           />
         </button>
       </div>
@@ -37,9 +37,9 @@ const Header = ({
         <input
           type="text"
           value={searchTerm}
-          placeholder="Search note"
+          placeholder="Search"
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="text-lg dark:text-zinc-100 border-b-2 bg-transparent w-32 md:w-48 border-zinc-100 dark:border-zinc-300 outline-none"
+          className="text-lg dark:text-zinc-100 border-b-2 bg-transparent w-24 sm:w-32 md:w-48 border-zinc-100 dark:border-zinc-300 outline-none"
         />
         <button
           className="text-[20px] font"
@@ -48,7 +48,7 @@ const Header = ({
           <img
             src={isDarkMode ? darkIcon : lightIcon}
             alt="colour mode icon"
-            className="w-6 h-6"
+            className="min-w-6 h-6 cursor-pointer"
           />
         </button>
       </div>

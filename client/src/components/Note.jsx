@@ -1,6 +1,8 @@
 import { useState } from "react";
 import Button from "./Button";
 import pencilIcon from "../assets/pencil.svg";
+import deleteIcon from "../assets/trash3.svg";
+import pinIcon from "../assets/bookmark-heart.svg";
 
 const Note = ({ note, deleteNote, updateNote }) => {
   const [isDeleting, setIsDeleting] = useState(false);
@@ -44,9 +46,13 @@ const Note = ({ note, deleteNote, updateNote }) => {
     }, 300);
   };
 
+  const handlePin = () => {
+    updateNote(note.id, { ...note, is_pinned: !note.is_pinned });
+  };
+
   return (
     <div
-      className={`${isDeleting ? "opacity-0 scale-90" : "opacity-100 scale-100"} transition-all duration-500 bg-zinc-100 dark:bg-zinc-900 p-4 rounded-md shadow-md flex flex-col gap-2 border border-transparent dark:border-zinc-800 h-full`}
+      className={`${isDeleting ? "opacity-0 scale-90" : "opacity-100 scale-100"} ${note.is_pinned ? "ring-2 ring-yellow-300" : ""} transition-all duration-500 bg-zinc-100 dark:bg-zinc-900 p-4 rounded-md shadow-md flex flex-col gap-2 border border-transparent dark:border-zinc-800 h-full`}
     >
       {isEditing ? (
         <div className="flex flex-col gap-2 h-full">
@@ -77,11 +83,17 @@ const Note = ({ note, deleteNote, updateNote }) => {
             <h2 className="text-xl capitalize text-yellow-500 dark:text-yellow-400 border-b-2 border-yellow-300 dark:border-zinc-700">
               {note.title}
             </h2>
+
             <div className="flex gap-2">
+              <Button onClick={handlePin}>
+                <img src={pinIcon} alt="delete icon" className="w-5 h-5" />
+              </Button>
               <Button onClick={() => setIsEditing(true)}>
                 <img src={pencilIcon} alt="edit icon" className="w-5 h-5" />
               </Button>
-              <Button onClick={handleDelete}>Delete</Button>
+              <Button onClick={handleDelete}>
+                <img src={deleteIcon} alt="delete icon" className="w-5 h-5" />
+              </Button>
             </div>
           </div>
           <p className="font-light text-lg text-zinc-700 dark:text-zinc-300">

@@ -55,13 +55,15 @@ const App = () => {
     showStatusMessage,
   );
 
-  const filteredNotes = notes.filter((note) => {
-    const searchLowerCase = searchTerm.toLowerCase();
-    return (
-      note.title.toLowerCase().includes(searchLowerCase) ||
-      note.content.toLowerCase().includes(searchLowerCase)
-    );
-  });
+  const filteredNotes = notes
+    .filter((note) => {
+      const searchLowerCase = searchTerm.toLowerCase();
+      return (
+        (note.title?.toLowerCase() || "").includes(searchLowerCase) ||
+        (note.content?.toLowerCase() || "").includes(searchLowerCase)
+      );
+    })
+    .sort((a, b) => b.is_pinned - a.is_pinned);
 
   // MODAL
   const openAddModal = () => setUserModalConfig({ isOpen: true, mode: "add" });
@@ -126,7 +128,7 @@ const App = () => {
           </p>
         )}
         <div className="flex flex-col gap-4 sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {notes.map((note) => (
+          {filteredNotes.map((note) => (
             <Note
               key={note.id}
               note={note}
